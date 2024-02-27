@@ -1,6 +1,9 @@
 package lexer
 
-import "calgo/internals/token"
+import (
+	"calgo/internals/token"
+	"fmt"
+)
 
 const NULLCHR rune = '\x00'
 
@@ -62,6 +65,7 @@ func (l *Lexer) NextToken() token.Token {
 		}
 	default:
 		if ifDig(l.ch) {
+			fmt.Println("uwu")
 			return l.readDig()
 		} else {
 			return token.Token{
@@ -82,6 +86,8 @@ func (l *Lexer) readDig() token.Token {
 	for ifDig(l.ch) {
 		l.readChar()
 	}
+	fmt.Println(l.input[pos:l.position], l.position, pos)
+
 	return token.Token{
 		Type:    token.INT,
 		Literal: l.input[pos:l.position],
@@ -89,17 +95,17 @@ func (l *Lexer) readDig() token.Token {
 }
 
 func ifDig(ch rune) bool {
-	return '0' <= ch && ch >= '9'
+	return '0' <= ch && '9' >= ch
 }
 
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = NULLCHR
 	} else {
-		l.position = l.readPosition
-		l.readPosition++
-		l.ch = rune(l.input[l.position])
+		l.ch = rune(l.input[l.readPosition])
 	}
+	l.position = l.readPosition
+	l.readPosition++
 }
 
 func (l *Lexer) skipWhites() {
